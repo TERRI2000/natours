@@ -1,0 +1,163 @@
+extends base
+include _reviewCard
+include _modalWindow
+
+block append head
+  script(src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.3/leaflet.js" integrity="sha256-WBkoXOwTeyKclOHuWtc+i2uENFpDZ9YPdf5Hf+D7ewM=" crossorigin="")
+  link(rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.3/leaflet.css" integrity="sha256-kLaT2GOSpHechhsozzB+flnD+zUyjE2LlfWPgU04xyI=" crossorigin="")
+
+mixin overviewBox(label, text, icon)
+  .overview-box__detail
+    svg.overview-box__icon
+      use(xlink:href=`/img/icons.svg#icon-${icon}`)
+    span.overview-box__label= label
+    span.overview-box__text= text
+
+block content
+  section.section-header
+    .header__hero
+      .header__hero-overlay &nbsp;
+      img.header__hero-img(src=`/img/tours/${tour.imageCover}`, alt=`${tour.name}`)
+
+    .heading-box
+      h1.heading-primary
+        span= `${tour.name} tour`
+      .heading-box__group
+        .heading-box__detail
+          svg.heading-box__icon
+            use(xlink:href='/img/icons.svg#icon-clock')
+          span.heading-box__text= `${tour.duration} days`
+        .heading-box__detail
+          svg.heading-box__icon
+            use(xlink:href='/img/icons.svg#icon-map-pin')
+          span.heading-box__text= tour.startLocation.description
+
+  section.section-description
+    .overview-box
+      div
+        .overview-box__group
+          h2.heading-secondary.ma-bt-lg Quick facts
+
+          +overviewBox('Next date', tour.startDates[0].date.toLocaleString('en-us', {month: 'long', year: 'numeric'}), 'calendar')
+          +overviewBox('Difficulty', tour.difficulty, 'trending-up')
+          +overviewBox('Participants', `${tour.maxGroupSize} people`, 'user')
+          +overviewBox('Rating', `${tour.ratingsAverage} / 5`, 'star')
+
+        .overview-box__group
+          h2.heading-secondary.ma-bt-lg Your tour guides
+
+          each guide in tour.guides
+            .overview-box__detail
+              img.overview-box__img(src=`/img/users/${guide.photo}`, alt=`${guide.name}`)
+
+              - if (guide.role === 'lead-guide')
+                span.overview-box__label Lead guide
+              - if (guide.role === 'guide')
+                span.overview-box__label Tour guide
+              span.overview-box__text= guide.name
+
+    .description-box
+      h2.heading-secondary.ma-bt-lg= `About ${tour.name} tour`
+      - const parapraphs = tour.description.split('\n');
+      each p in parapraphs
+        p.description__text= p
+
+  section.section-pictures
+    each img, i in tour.images
+      .picture-box
+        img.picture-box__img(src=`/img/tours/${img}`, alt=`The ${tour.name} Tour ${i + 1}`, class=`picture-box__img--${i + 1}`)
+
+  section.section-map
+    #map(data-locations=`${JSON.stringify(tour.locations)}`)
+
+  section.section-reviews
+    .reviews
+      each review in tour.reviews
+        +reviewCard(review)
+
+    // Review forms section
+  if user && hasBooked && !userReview
+    section.review-form-section
+      .review-form-container
+        h2.heading-secondary.ma-bt-lg Write a Review
+        p.paragraph Share your experience with other travelers!
+        
+        form.form.form--review(data-tour-id=tour.id)
+          .form__group
+            label.form__label(for='rating') Rating *
+            select#rating.form__input(required)
+              option(value='') Choose rating...
+              option(value='5') 5 - Excellent
+              option(value='4') 4 - Very Good
+              option(value='3') 3 - Good
+              option(value='2') 2 - Fair
+              option(value='1') 1 - Poor
+          
+          .form__group
+            label.form__label(for='review') Your Review *
+            textarea#review.form__input(rows='5', placeholder='Write your review here... Share what you liked about the tour, the guides, locations, activities, etc.', required)
+          
+          .form__group
+            button.btn.btn--green(type='submit') Submit Review
+
+  else if user && userReview && userReview.createdAt
+    section.review-form-section
+      .review-form-container
+        h2.heading-secondary.ma-bt-lg Your Review
+        p.paragraph You reviewed this tour on #{userReview.createdAt.toDateString()}
+        
+        .current-review-display
+          .review-rating
+            each star in [1,2,3,4,5]
+              svg.reviews__star(class=`reviews__star--${userReview.rating >= star ? 'active' : 'inactive'}`)
+                use(xlink:href='/img/icons.svg#icon-star')
+          p.review-text= userReview.review
+        
+        details.edit-review-details
+          summary.btn.btn--green.btn--small Edit Review
+          
+          form.form.form--edit-review.ma-bt-md(data-review-id=userReview._id)
+            .form__group
+              label.form__label(for='edit-rating') Rating *
+              select#edit-rating.form__input(required)
+                option(value='5', selected=userReview.rating === 5) 5 - Excellent
+                option(value='4', selected=userReview.rating === 4) 4 - Very Good
+                option(value='3', selected=userReview.rating === 3) 3 - Good
+                option(value='2', selected=userReview.rating === 2) 2 - Fair
+                option(value='1', selected=userReview.rating === 1) 1 - Poor
+            
+            .form__group
+              label.form__label(for='edit-review-text') Your Review *
+              textarea#edit-review-text.form__input(rows='5', required)= userReview.review
+            
+            .form__group.review-actions
+              button.btn.btn--green(type='submit') Update Review
+              button.btn.btn--red.ma-lt-sm(type='button', id='delete-review') Delete Review
+
+  else if user && !hasBooked
+    section.review-form-section
+      .review-form-container
+        .review-message
+          h3.heading-tertiary Book this tour to leave a review
+          p.paragraph Only travelers who have booked this tour can leave reviews.
+  section.section-cta
+    .cta
+      .cta__img.cta__img--logo
+        img(src='/img/logo-white.png', alt='Natours logo')
+      img.cta__img.cta__img--1(src=`/img/tours/${tour.images[1]}`, alt='Tour picture')
+      img.cta__img.cta__img--2(src=`/img/tours/${tour.images[2]}`, alt='Tour picture')
+      include _dateBox
+
+  //- =============================================
+  //- МОДАЛЬНІ ВІКНА (для видалення відгуку в tour.pug)
+  //- =============================================
+  
+  //- Модальне вікно для підтвердження видалення відгуку
+  +confirmModal(
+    'delete-review-confirm-modal', 
+    'Delete Review', 
+    'Are you sure you want to delete this review? This action cannot be undone.',
+    'Delete Review', 
+    'Cancel',
+    'btn--red'
+  )

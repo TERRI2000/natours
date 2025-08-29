@@ -1,0 +1,44 @@
+//- Універсальне модальне вікно для підтвердження дій
+mixin confirmModal(id, title, message, confirmText, cancelText, confirmClass)
+  .modal(id=id, style="display: none;")
+    .modal__content(style="max-width: 45rem;")
+      .modal__header
+        h3.heading-tertiary= title
+        span.modal__close-confirm &times;
+      
+      .modal__body
+        p.paragraph= message
+      
+      .modal__actions
+        button.btn.btn--small.btn--grey.cancel-delete-btn= cancelText || 'Cancel'
+        button.btn.btn--small(class=confirmClass || 'btn--red').confirm-delete-btn= confirmText || 'Confirm'
+
+//- Модальне вікно для форм (редагування відгуків тощо)
+mixin formModal(id, title)
+  .modal(id=id, style="display: none;")
+    .modal__content
+      .modal__header
+        h2.heading-secondary= title
+        span.modal__close &times;
+      
+      .modal__body
+        if block
+          block
+      
+      .modal__actions
+        button.btn.btn--green(type="submit", form=`${id}-form`) Save Changes
+        button.btn.btn--grey.modal__close-btn(type="button") Cancel
+
+//- Універсальне інформаційне модальне вікно
+mixin infoModal(id, title, message, buttonText, buttonClass)
+  .modal(id=id, style="display: none;")
+    .modal__content(style="max-width: 40rem;")
+      .modal__header
+        h3.heading-tertiary= title
+        span.modal__close &times;
+      
+      .modal__body
+        p.paragraph= message
+      
+      .modal__actions
+        button.btn(class=buttonClass || 'btn--green').modal__close-btn= buttonText || 'OK'

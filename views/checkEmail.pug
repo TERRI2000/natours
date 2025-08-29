@@ -1,0 +1,17 @@
+extends base
+
+block content
+  main.main
+    .login-form
+      h2.heading-secondary.ma-bt-lg Check Your Email
+      
+      .alert.alert--info
+        svg.alert__icon
+          use(xlink:href='/img/icons.svg#icon-alert-triangle')
+        p We've sent a confirmation email to your inbox.
+        p Please click the link in the email to activate your account.
+        p 
+          strong Didn't receive the email? 
+          a(href="#" id="resend-email") Resend confirmation email
+        
+      a.btn.btn--green(href="/login") Back to login

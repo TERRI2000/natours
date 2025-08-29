@@ -1,0 +1,302 @@
+extends base
+include _modalWindow
+
+mixin navItem(link, text, icon, active)
+  li(class=`${active ? 'side-nav--active' : ''}`)
+    a(href=`${link}`)
+      svg
+        use(xlink:href=`/img/icons.svg#icon-${icon}`)
+      | #{text}
+
+block content
+  main.main
+    .user-view
+     
+      nav.user-view__menu
+        ul.side-nav
+          +navItem('/me', 'Settings', 'settings', !currentPage)
+          +navItem('/my-tours', 'My bookings', 'briefcase', currentPage === 'bookings')
+          +navItem('/my-reviews', 'My reviews', 'star', currentPage === 'reviews')
+          +navItem('/billing', 'Billing', 'credit-card', currentPage === 'billing')
+
+        - if (user && user.role === 'admin')
+          .admin-nav
+            h5.admin-nav__heading Admin
+            ul.side-nav
+              +navItem('/admin/tours', 'Manage tours', 'map', currentPage === 'admin-tours')
+              +navItem('/admin/users', 'Manage users', 'users', currentPage === 'admin-users')
+              +navItem('/admin/reviews', 'Manage reviews', 'star', currentPage === 'admin-reviews')
+              +navItem('/admin/bookings', 'Manage bookings', 'briefcase', currentPage === 'admin-bookings')
+
+      .user-view__content
+        .user-view__form-container
+          
+          //- ===== MY REVIEWS PAGE =====
+          if currentPage === 'reviews'
+            h2.heading-secondary.ma-bt-md My Reviews
+            
+            if !reviews || reviews.length === 0
+              .empty-reviews
+                h3.heading-tertiary No reviews yet
+                p.paragraph You haven't written any reviews yet. Book a tour to share your experience!
+                p.paragraph 
+                  a.btn.btn--green(href='/') Browse tours to write your first review!
+            else
+              .reviews-list
+                each review in reviews
+                  .review-card.ma-bt-lg
+                    .review-header
+                      .review-tour-info
+                        if review.tour && review.tour.slug
+                          h4.heading-tertiary
+                            a.review-tour-link(href=`/tour/${review.tour.slug}`)= review.tour.name || 'Mountain Adventure Expedition'
+                        else
+                          h4.heading-tertiary.review-tour-unavailable Tour no longer available
+                        
+                        if review.createdAt
+                          p.review-date Reviewed on #{review.createdAt.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
+                        else
+                          p.review-date Review date unknown
+                      
+                      .review-rating
+                        each star in [1,2,3,4,5]
+                          svg.reviews__star(class=`reviews__star--${review.rating >= star ? 'active' : 'inactive'}`)
+                            use(xlink:href='/img/icons.svg#icon-star')
+                        span.rating-number #{review.rating}/5
+                    
+                    .review-content
+                      p.review-text= review.review || 'Incredible journey through breathtaking landscapes! The guides were knowledgeable and the experience exceeded all expectations. Perfect for adventure seekers looking for an unforgettable mountain expedition.'
+                    
+                    .review-actions
+                      button.btn.btn--small.btn--green.edit-review-btn(data-review-id=review._id) Edit Review
+                      button.btn.btn--small.btn--red.delete-review-btn(data-review-id=review._id) Delete Review
+
+          //- ===== ADMIN: MANAGE TOURS =====
+          else if currentPage === 'admin-tours'
+            .admin-header
+              h2.heading-secondary Manage Tours
+              button.btn.btn--green#create-tour-btn Create New Tour
+
+            .admin-table-container
+              table.admin-table
+                thead
+                  tr
+                    th Image
+                    th Name
+                    th Price
+                    th Difficulty
+                    th Duration
+                    th Rating
+                    th Actions
+                tbody#tours-table-body
+                  // Дані завантажуються через AJAX
+
+          //- ===== ADMIN: MANAGE USERS =====
+          else if currentPage === 'admin-users'
+            h2.heading-secondary.ma-bt-md Manage Users
+            
+            .admin-table-container
+              table.admin-table
+                thead
+                  tr
+                    th Photo
+                    th Name
+                    th Email
+                    th Role
+                    th Status
+                    th Joined
+                    th Actions
+                tbody
+                  if users
+                    each user in users
+                      tr(data-user-id=user._id)
+                        td
+                          img.admin-table__image(src=`/img/users/${user.photo}`, alt=`${user.name}`)
+                        td= user.name
+                        td= user.email
+                        td
+                          select.admin-role-select(data-user-id=user._id)
+                            option(value="user", selected=user.role === 'user') User
+                            option(value="guide", selected=user.role === 'guide') Guide
+                            option(value="lead-guide", selected=user.role === 'lead-guide') Lead Guide
+                            option(value="admin", selected=user.role === 'admin') Admin
+                        td
+                          span.status-badge(class=`status--${user.emailConfirmed ? 'confirmed' : 'pending'}`)
+                            = user.emailConfirmed ? 'Confirmed' : 'Pending'
+                        td
+                          if user.createdAt
+                            = user.createdAt.toDateString()
+                          else
+                            span.text-muted Unknown
+                        td
+                          button.btn.btn--small.btn--red.delete-user-btn(data-user-id=user._id) Delete
+
+          //- ===== ADMIN: MANAGE REVIEWS =====
+          else if currentPage === 'admin-reviews'
+            h2.heading-secondary.ma-bt-md Manage Reviews
+            
+            .admin-table-container
+              table.admin-table
+                thead
+                  tr
+                    th User
+                    th Tour
+                    th Rating
+                    th Review
+                    th Date
+                    th Actions
+                tbody
+                  if reviews
+                    each review in reviews
+                      tr(data-review-id=review._id)
+                        td
+                          if review.user && review.user.name
+                            = review.user.name
+                          else
+                            span.text-muted User deleted
+                        td
+                          if review.tour && review.tour.name
+                            = review.tour.name
+                          else
+                            span.text-muted Tour deleted
+                        td
+                          .review-rating
+                            each star in [1,2,3,4,5]
+                              svg.reviews__star--small(class=`reviews__star--${review.rating >= star ? 'active' : 'inactive'}`)
+                                use(xlink:href='/img/icons.svg#icon-star')
+                        td
+                          if review.review
+                            = review.review.substring(0, 100) + (review.review.length > 100 ? '...' : '')
+                          else
+                            span.text-muted No review text
+                        td
+                          if review.createdAt
+                            = review.createdAt.toDateString()
+                          else
+                            span.text-muted Unknown date
+                        td
+                          button.btn.btn--small.btn--red.admin-delete-review-btn(data-review-id=review._id) Delete
+
+          //- ===== ADMIN: MANAGE BOOKINGS =====
+          else if currentPage === 'admin-bookings'
+            h2.heading-secondary.ma-bt-md Manage Bookings
+            
+            .admin-table-container
+              table.admin-table
+                thead
+                  tr
+                    th User
+                    th Tour
+                    th Date
+                    th Price
+                    th Status
+                    th Booked On
+                    th Actions
+                tbody
+                  if bookings
+                    each booking in bookings
+                      tr(data-booking-id=booking._id)
+                        td
+                          if booking.user && booking.user.name
+                            = booking.user.name
+                          else
+                            span.text-muted User deleted
+                        td
+                          if booking.tour && booking.tour.name
+                            = booking.tour.name
+                          else
+                            span.text-muted Tour deleted
+                        td
+                          if booking.tourDate
+                            - var tourDate = new Date(booking.tourDate)
+                            - var isValidDate = !isNaN(tourDate.getTime())
+                            if isValidDate
+                              = tourDate.toDateString()
+                            else
+                              span.text-muted Invalid Date
+                          else
+                            span.text-muted N/A
+                        td
+                          if booking.price
+                            | $#{booking.price}
+                          else
+                            span.text-muted N/A
+                        td
+                          select.admin-booking-status(data-booking-id=booking._id)
+                            option(value="pending", selected=booking.status === 'pending') Pending
+                            option(value="confirmed", selected=booking.status === 'confirmed') Confirmed
+                            option(value="cancelled", selected=booking.status === 'cancelled') Cancelled
+                        td
+                          if booking.createdAt
+                            = booking.createdAt.toDateString()
+                          else
+                            span.text-muted Unknown date
+                        td
+                          button.btn.btn--small.btn--red.delete-booking-btn(data-booking-id=booking._id) Delete
+
+          //- ===== DEFAULT: USER SETTINGS =====
+          else
+            h2.heading-secondary.ma-bt-md Your account settings
+            form.form.form-user-data
+              .form__group
+                label.form__label(for='name') Name
+                input#name.form__input(type='text', value=`${user.name}`, required, name='name')
+              .form__group.ma-bt-md
+                label.form__label(for='email') Email address
+                input#email.form__input(type='email', value=`${user.email}`, required, name='email')
+                if user && !user.emailConfirmed
+                  small.form__helper-text.text-warning
+                    | ⚠️ This email address is not confirmed. 
+                    a#resend-email-inline(href='#' style='color: #f39c12;') Click here to resend confirmation
+              .form__group.form__photo-upload
+                img.form__user-photo(src=`/img/users/${user.photo}`, alt='User photo')
+                input.form__upload(type='file', accept='image/*', id='photo', name='photo')
+                label(for='photo') Choose new photo
+                
+              .form__group.right
+                button.btn.btn--small.btn--green Save settings
+
+        //- Password change section (only on main settings page)
+        if !currentPage
+          .line &nbsp;
+          
+          .user-view__form-container
+            h2.heading-secondary.ma-bt-md Password change
+            form.form.form-user-password
+              .form__group
+                label.form__label(for='password-current') Current password
+                input#password-current.form__input(type='password', placeholder='••••••••', required, minlength='8')
+              .form__group
+                label.form__label(for='password') New password
+                input#password.form__input(type='password', placeholder='••••••••', required, minlength='8')
+              .form__group.ma-bt-lg
+                label.form__label(for='password-confirm') Confirm password
+                input#password-confirm.form__input(type='password', placeholder='••••••••', required, minlength='8')
+              .form__group.right
+                button.btn.btn--small.btn--green.btn--save-password Save password
+
+  //- =============================================
+  //- МОДАЛЬНІ ВІКНА з використанням _modalWindow.pug
+  //- =============================================
+
+  //- Модальне вікно для редагування відгуку
+  +formModal('edit-review-modal', 'Edit Review')
+    form.form#edit-review-modal-form
+      input#modal-review-id(type="hidden")
+      .form__group
+        label.form__label(for="modal-rating") Rating
+        select#modal-rating.form__input(required)
+          option(value="5") 5 - Excellent  
+          option(value="4") 4 - Very Good
+          option(value="3") 3 - Good
+          option(value="2") 2 - Fair
+          option(value="1") 1 - Poor
+      .form__group
+        label.form__label(for="modal-review") Review
+        textarea#modal-review.form__input(rows="4", required, placeholder="Share your experience...")
+
+  //- Модальні вікна підтвердження
+  +confirmModal('delete-confirm-modal', 'Delete Review', 'Are you sure you want to delete this review? This action cannot be undone.', 'Delete Review', 'Cancel', 'btn--red')
+  +confirmModal('delete-tour-modal', 'Delete Tour', 'Are you sure you want to delete this tour?', 'Delete Tour', 'Cancel', 'btn--red')
+  +confirmModal('delete-user-modal', 'Delete User', 'Are you sure you want to delete this user?', 'Delete User', 'Cancel', 'btn--red')
+  +confirmModal('delete-booking-modal', 'Delete Booking', 'Are you sure you want to delete this booking?', 'Delete Booking', 'Cancel', 'btn--red')

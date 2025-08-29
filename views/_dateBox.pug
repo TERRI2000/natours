@@ -1,0 +1,46 @@
+.cta__content
+  //- Ліва колонка
+  .cta__column.cta__column--left
+    h2.heading-secondary What are you waiting for?
+    p.cta__text= `${tour.duration} days. 1 adventure. Infinite memories. Make it yours today!`
+
+  //- Права колонка  
+  .cta__column.cta__column--right
+    if user && hasBooked
+      .booking-confirmed
+        svg.booking-confirmed__icon
+          use(xlink:href='/img/icons.svg#icon-check')
+        h3.heading-tertiary You have booked this tour!
+        p.paragraph Check your booking details in 
+          a.btn-text(href='/my-tours') My Tours
+    else
+      .date-selection-block
+        h2.heading-secondary Choose your tour date
+        .dates-container
+          each date, index in tour.startDates
+            - const isSoldOut = date.participants >= tour.maxGroupSize
+            - const formattedDate = new Date(date.date)
+            .date-card(
+              class=`${isSoldOut ? 'date-card--sold-out' : ''}`
+              data-date-id=date._id
+            )
+              .date-card__month= formattedDate.toLocaleDateString('en-US', { month: 'short' }).toUpperCase()
+              .date-card__date= formattedDate.getDate()
+              .date-card__year= formattedDate.getFullYear()
+              .date-card__availability(class=`date-card__availability--${isSoldOut ? 'sold-out' : 'available'}`)
+                = isSoldOut ? 'SOLD OUT' : 'Available'
+              if !isSoldOut
+                .date-card__participants #{date.participants}/#{tour.maxGroupSize} booked
+
+        //- Кнопка бронювання (спочатку прихована)
+        if user
+          button.btn.btn--green.span-all-rows#book-tour(
+            data-tour-id=tour.id
+            style="display: none; margin: 2rem auto; width: 100%; max-width: 40rem;"
+          ) Book tour now!
+          
+          //- Контейнер для PayPal кнопки
+          #paypal-button-container(style="margin: 2rem auto; max-width: 40rem;")
+        else
+          .ma-bt-lg
+            a.btn.btn--green.span-all-rows(href='/login') Log in to book tour

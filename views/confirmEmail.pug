@@ -1,0 +1,24 @@
+extends base
+
+block content
+  main.main
+    .login-form
+      h2.heading-secondary.ma-bt-lg Email Confirmation
+      
+      .email-confirm-status
+        - if (status === 'success')
+          .alert.alert--success
+            | Your email has been confirmed successfully! You can now log in to your account.
+            br
+            a.btn.btn--green.btn--small(href="/login") Log in now
+        
+        - else if (status === 'error')
+          .alert.alert--error
+            | #{message}
+            br
+            a.btn.btn--blue.btn--small(href="/signup") Sign up again
+        
+        - else
+          .alert.alert--warning
+            | Confirming your email address...
+            .loader
