@@ -21,3 +21,4 @@ yarn-error.log*
 public/img/users/*
 !public/img/users/default.jpg
 !public/img/users/user-*.jpg
+config.env
