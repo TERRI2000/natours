@@ -48,7 +48,7 @@ export const bookTourPayPal = async (tourId, tourDateId) => {
               tourDateId: tourDateId,
               price: orderData.purchase_units[0].amount.value,
             };
-            console.log('Sending booking data:', bookingData);
+          
             // Відправляємо запит на створення бронювання
             const response = await axios.post('/api/v1/bookings', bookingData);
 
@@ -59,8 +59,7 @@ export const bookTourPayPal = async (tourId, tourDateId) => {
               }, 1500);
             }
           } catch (error) {
-            console.error('Booking error:', error);
-
+        
             // Тут додаємо перевірку на статус 403 (email не підтверджено)
             if (error.response?.status === 403) {
               showAlert(
@@ -90,13 +89,13 @@ export const bookTourPayPal = async (tourId, tourDateId) => {
         },
 
         onError: (err) => {
-          console.error('PayPal error:', err);
+     
           showAlert('error', 'Something went wrong processing your payment!');
         },
       })
       .render('#paypal-button-container');
   } catch (err) {
-    console.error('Error:', err);
+
     // Показуємо більш детальну помилку
     if (err.response && err.response.data && err.response.data.message) {
       showAlert('error', err.response.data.message);

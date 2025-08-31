@@ -34,7 +34,6 @@ import {
 } from './admin';
 
 window.axios = axios;
-console.log('Parcel bundle loaded! 🚀');
 
 let selectedTourDateId = null;
 
@@ -66,7 +65,7 @@ const closeAllModals = () => {
 const showConfirmation = (modalId, onConfirm, onCancel = null) => {
   const modal = document.getElementById(modalId);
   if (!modal) {
-    console.error(`Modal with id "${modalId}" not found`);
+   
     return;
   }
 
@@ -238,7 +237,7 @@ document.addEventListener('DOMContentLoaded', () => {
         bookBtn.style.display = 'inline-block';
       }
 
-      console.log('Selected date ID:', selectedTourDateId);
+     
     });
   });
 
@@ -327,7 +326,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const rating = document.getElementById('rating').value;
       const review = document.getElementById('review').value;
       const tourId = reviewForm.dataset.tourId;
-      console.log('Submitting review for tour ID:', tourId);
+
       if (!rating || !review) {
         showAlert('error', 'Please provide both rating and review!');
         return;
@@ -394,7 +393,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       } catch (err) {
         showAlert('error', 'Could not load review data');
-        console.error('Load review error:', err);
+    
       }
     });
   });
@@ -445,7 +444,7 @@ document.addEventListener('DOMContentLoaded', () => {
           'error',
           err.response?.data?.message || 'Error updating review',
         );
-        console.error('Update review error:', err);
+     
       }
     });
   }
@@ -459,7 +458,7 @@ document.addEventListener('DOMContentLoaded', () => {
     new URLSearchParams(window.location.search).get('page') ||
     window.location.pathname.split('/').pop();
 
-  console.log('Current page:', currentPage);
+ 
 
   // ===== ADMIN: MANAGE TOURS =====
   if (
@@ -510,7 +509,7 @@ document.addEventListener('DOMContentLoaded', () => {
           e.target.closest('#tour-modal'))
       ) {
         e.preventDefault();
-        console.log('Save changes button clicked'); // Debug
+       
         await handleTourFormSubmit();
       }
 
@@ -567,7 +566,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // ФУНКЦІЯ ОБРОБКИ ФОРМИ ТУРУ
     const handleTourFormSubmit = async () => {
       try {
-        console.log('Processing tour form...'); // Debug
+        
 
         const tourId = document.getElementById('tour-id')?.value || '';
         const imageFile = document.getElementById('tour-image-cover').files[0];
@@ -737,8 +736,6 @@ document.addEventListener('DOMContentLoaded', () => {
         // Закрити модальне вікно
         closeModal('tour-modal');
       } catch (err) {
-        console.error('Tour form submit error:', err);
-
         // Відновити кнопку при помилці
         const saveBtn = document.querySelector('#tour-modal .btn--green');
         if (saveBtn) {
@@ -764,7 +761,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
       try {
         const tour = await getTour(tourId);
-        console.log('Tour data for editing:', tour); // Debug
 
         // Заповнити форму тільки тими полями які можна редагувати
         document.getElementById('tour-id').value = tour._id || '';
@@ -828,7 +824,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }, 100);
       } catch (err) {
         showAlert('error', 'Error loading tour data');
-        console.error('Edit tour error:', err);
+
       }
     }
 
@@ -905,7 +901,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  console.log('Index.js with admin functionality successfully loaded! 🚀');
 });
 
 // Функція видалення відгуку
@@ -918,6 +913,6 @@ const deleteReview = async (reviewId) => {
     }, 1500);
   } catch (err) {
     showAlert('error', err.response?.data?.message || 'Error deleting review');
-    console.error('Delete review error:', err);
+
   }
 };

@@ -38,15 +38,13 @@ exports.getTour = catchAsync(async (req, res, next) => {
   let userReview = null;
 
   if (res.locals.user) {
-    console.log('User ID:', res.locals.user.id); // ДОДАТИ ДЛЯ ДЕБАГУ
-    console.log('Tour ID:', tour._id); // ДОДАТИ ДЛЯ ДЕБАГУ
     const booking = await Booking.findOne({
       user: res.locals.user.id,
       tour: tour.id,
     });
     // Check if user already reviewed this tour
     if (booking) {
-      console.log('Booking found, ID:', booking.id);
+  
       hasBooked = true;
 
       // Check if user already reviewed this tour
@@ -55,7 +53,7 @@ exports.getTour = catchAsync(async (req, res, next) => {
         tour: tour.id,
       });
     } else {
-      console.log('No booking found for this user and tour');
+ 
       hasBooked = false;
     }
   }

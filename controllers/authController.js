@@ -303,11 +303,9 @@ exports.updatePassword = catchAsync(async (req, res, next) => {
 });
 
 exports.resendConfirmEmail = catchAsync(async (req, res, next) => {
-  console.log('Resend confirm email called with:', req.body);
 
   // 1) Знайти користувача за email
   const user = await User.findOne({ email: req.body.email });
-  console.log('Found user:', user?.email);
 
   if (!user) {
     return next(new AppError('No user found with that email address.', 404));
@@ -326,9 +324,6 @@ exports.resendConfirmEmail = catchAsync(async (req, res, next) => {
     // 4) Відправити новий email
     const confirmURL = `${req.protocol}://${req.get('host')}/api/v1/users/confirm-email/${confirmToken}`;
 
-    console.log('Sending confirmation email to:', user.email);
-    console.log('Confirmation URL:', confirmURL);
-
     await new Email(user, confirmURL).sendEmailConfirmation();
 
     res.status(200).json({
@@ -336,7 +331,6 @@ exports.resendConfirmEmail = catchAsync(async (req, res, next) => {
       message: 'Confirmation email sent to your email address!',
     });
   } catch (err) {
-    console.error('Error sending email:', err);
 
     // Очищуємо токени при помилці
     user.emailConfirmToken = undefined;

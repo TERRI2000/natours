@@ -100,7 +100,6 @@ exports.updateMe = catchAsync(async (req, res, next) => {
   let updatedUser;
   // 4) Якщо email змінився, скинути статус підтвердження та відправити новий токен
   if (emailChanged) {
-    console.log(`Email changed from ${currentUser.email} to ${req.body.email}`);
 
     // Скинути статус підтвердження
     filteredBody.emailConfirmed = false;

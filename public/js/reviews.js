@@ -3,7 +3,7 @@ import { showAlert } from './alerts';
 
 export const createReview = async (tourId, rating, review) => {
   try {
-    console.log('Creating review with:', { tourId, rating, review });
+  
     const res = await axios({
       method: 'POST',
       url: `/api/v1/reviews`,
@@ -72,7 +72,7 @@ export const getReview = async (reviewId) => {
 
     return res.data.data.data;
   } catch (err) {
-    console.error('Get review error:', err);
+
     showAlert(
       'error',
       err.response?.data?.message || 'Could not load review data',

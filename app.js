@@ -7,6 +7,7 @@ const deepSanitize = require('./utils/deepSanitize');
 const hpp = require('hpp');
 const path = require('path');
 const cookieParser = require('cookie-parser');
+const compression = require('compression');
 
 const AppError = require('./utils/appError');
 const globalErrorHandler = require('./controllers/errorController');
@@ -113,10 +114,12 @@ app.use(
 // This is useful for serving static assets like images, CSS files, etc.
 app.use(express.static(path.join(__dirname, 'public')));
 
+app.use(compression());
+
 // Test middleware
 app.use((req, res, next) => {
   req.requestTime = new Date().toISOString();
-  console.log(req.cookies);
+
   next();
 });
 

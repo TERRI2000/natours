@@ -7,8 +7,7 @@ import { showAlert } from './alerts';
 export const loadTours = async () => {
   try {
     const res = await axios.get('/api/v1/tours');
-    
-    console.log('API Response:', res.data);
+  
     
     if (!res.data || res.data.status !== 'success') {
       throw new Error('Invalid API response status');
@@ -22,20 +21,17 @@ export const loadTours = async () => {
     } else if (res.data.data && Array.isArray(res.data.data)) {
       tours = res.data.data;
     } else {
-      console.error('Unexpected data structure:', res.data);
+     
       throw new Error('No tours data found in response');
     }
     
     if (!Array.isArray(tours)) {
-      console.error('Tours data:', tours);
       throw new Error('Tours data is not an array');
     }
     
-    console.log(`Loading ${tours.length} tours`);
-    
     const tableBody = document.getElementById('tours-table-body');
     if (!tableBody) {
-      console.error('Table body element not found');
+      
       return;
     }
     
@@ -76,12 +72,10 @@ export const loadTours = async () => {
       </tr>
     `).join('');
     
-    console.log('Tours table loaded successfully');
+   
     
   } catch (err) {
     showAlert('error', 'Error loading tours: ' + err.message);
-    console.error('Load tours error:', err);
-    console.error('Error details:', err.response?.data);
     
     const tableBody = document.getElementById('tours-table-body');
     if (tableBody) {
@@ -102,8 +96,6 @@ export const getTour = async (tourId) => {
   try {
     const res = await axios.get(`/api/v1/tours/${tourId}`);
 
-    console.log('Get tour response:', res.data);
-
     // Правильний доступ до даних туру
     let tour;
     if (res.data.data && res.data.data.tour) {
@@ -115,14 +107,14 @@ export const getTour = async (tourId) => {
     } else if (res.data.data) {
       tour = res.data.data;
     } else {
-      console.error('Unexpected tour data structure:', res.data);
+      
       throw new Error('No tour data found in response');
     }
 
-    console.log('Parsed tour:', tour);
+  
     return tour;
   } catch (err) {
-    console.error('Get tour error:', err);
+  
     throw err;
   }
 };
@@ -142,7 +134,7 @@ export const createTourWithImage = async (formData) => {
   } catch (err) {
     const message = err.response?.data?.message || 'Error creating tour';
     showAlert('error', message);
-    console.error('Create tour error:', err);
+
   }
 };
 
@@ -161,7 +153,7 @@ export const updateTourWithImage = async (tourId, formData) => {
   } catch (err) {
     const message = err.response?.data?.message || 'Error updating tour';
     showAlert('error', message);
-    console.error('Update tour error:', err);
+  
   }
 };
 
@@ -177,7 +169,7 @@ export const createTour = async (tourData) => {
   } catch (err) {
     const message = err.response?.data?.message || 'Error creating tour';
     showAlert('error', message);
-    console.error('Create tour error:', err);
+   
   }
 };
 
@@ -192,7 +184,7 @@ export const updateTour = async (tourId, tourData) => {
   } catch (err) {
     const message = err.response?.data?.message || 'Error updating tour';
     showAlert('error', message);
-    console.error('Update tour error:', err);
+    
   }
 };
 
@@ -204,7 +196,7 @@ export const deleteTour = async (tourId) => {
   } catch (err) {
     const message = err.response?.data?.message || 'Error deleting tour';
     showAlert('error', message);
-    console.error('Delete tour error:', err);
+
   }
 };
 
@@ -219,7 +211,6 @@ export const updateUserRole = async (userId, newRole) => {
   } catch (err) {
     const message = err.response?.data?.message || 'Error updating user role';
     showAlert('error', message);
-    console.error('Update user role error:', err);
   }
 };
 
@@ -236,7 +227,7 @@ export const deleteUser = async (userId) => {
   } catch (err) {
     const message = err.response?.data?.message || 'Error deleting user';
     showAlert('error', message);
-    console.error('Delete user error:', err);
+
   }
 };
 
@@ -256,7 +247,7 @@ export const deleteReviewAdmin = async (reviewId) => {
   } catch (err) {
     const message = err.response?.data?.message || 'Error deleting review';
     showAlert('error', message);
-    console.error('Delete review error:', err);
+
   }
 };
 
@@ -276,7 +267,7 @@ export const deleteBookingAdmin = async (bookingId) => {
   } catch (err) {
     const message = err.response?.data?.message || 'Error deleting booking';
     showAlert('error', message);
-    console.error('Delete booking error:', err);
+ 
   }
 };
 
@@ -293,6 +284,5 @@ export const updateBookingStatus = async (bookingId, newStatus) => {
     const message =
       err.response?.data?.message || 'Error updating booking status';
     showAlert('error', message);
-    console.error('Update booking status error:', err);
   }
 };
