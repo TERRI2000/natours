@@ -197,14 +197,14 @@ exports.isLoggedIn = catchAsync(async (req, res, next) => {
 });
 
 exports.logout = (req, res) => {
-  // Очищуємо cookie з правильними опціями
+  // Очищуємо cookie з тими ж опціями, що й при встановленні
   res.clearCookie('jwt', {
     path: '/',
     httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
+    secure: req.secure || req.headers['x-forwarded-proto'] === 'https',
+    sameSite: (req.secure || req.headers['x-forwarded-proto'] === 'https') ? 'none' : 'lax'
   });
   
-
   res.status(200).json({ status: 'success' });
 };
 

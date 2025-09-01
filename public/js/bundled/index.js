@@ -22861,9 +22861,16 @@ const logout = async ()=>{
             url: '/api/v1/users/logout'
         });
         console.log('Logout response:', res.data);
-        if (res.data.status === 'success') location.assign('/');
+        if (res.data.status === 'success') {
+            console.log('Logout successful, clearing cookies and redirecting...');
+            // Використовуємо location.reload() замість location.assign('/')
+            setTimeout(()=>{
+                location.assign('/');
+            }, 100);
+        }
     } catch (err) {
-        (0, _alerts.showAlert)('error', err.response.data.message);
+        console.error('Logout error:', err);
+        (0, _alerts.showAlert)('error', err.response?.data?.message || 'Error logging out');
     }
 };
 const signup = async (name, email, password, passwordConfirm)=>{
