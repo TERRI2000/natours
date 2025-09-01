@@ -205,13 +205,7 @@ exports.logout = (req, res) => {
     sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax'
   });
   
-  // Додатково встановлюємо expired cookie
-  res.cookie('jwt', 'loggedout', {
-    expires: new Date(Date.now() + 10 * 1000), // 10 секунд
-    httpOnly: true,
-    path: '/'
-  });
-  
+
   res.status(200).json({ status: 'success' });
 };
 
