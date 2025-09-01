@@ -16,20 +16,6 @@ const { upload: cloudinaryUpload, cloudinary } = require('../utils/cloudinary');
 //     cb(null, `user-${req.user.id}-${Date.now()}.${ext}`);
 //   },
 // });
-// const deleteOldPhoto = (req) => {
-//   const photoPath = path.join(
-//     __dirname,
-//     './public/img/users/',
-//     req.user.photo,
-//   );
-//   fs.unlink(photoPath, (err) => {
-//     if (err) {
-//       console.log('Error deleting old photo:', err);
-//     } else {
-//       console.log('Old photo deleted successfully:', req.user.photo);
-//     }
-//   });
-// };
 
 const multerStorage = multer.memoryStorage();
 
@@ -48,10 +34,6 @@ const upload = process.env.NODE_ENV === 'production'
 
 exports.uploadUserPhoto = upload.single('photo');
 
-exports.deleteUserPhoto = (req, res, next) => {
-  if (!req.user.photo.includes('default')) deleteOldPhoto(req);
-  next();
-};
 
 exports.resizeUserPhoto = catchAsync(async (req, res, next) => {
   if (!req.file) return next();
