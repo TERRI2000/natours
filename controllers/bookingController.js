@@ -52,10 +52,10 @@ exports.getCheckoutSession = catchAsync(async (req, res, next) => {
   };
 
   // 3) Create session as response
-
   res.status(200).json({
     status: 'success',
     paypalOrder,
+    paypalClientId: process.env.PAYPAL_CLIENT_ID, // Додаємо Client ID для frontend
   });
 });
 
