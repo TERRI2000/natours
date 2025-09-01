@@ -335,7 +335,9 @@ document.addEventListener('DOMContentLoaded', ()=>{
     });
     // ===== ЛОГАУТ =====
     const logoutBtn = document.querySelector('.nav__el--logout');
+    console.log('Logout button found:', logoutBtn);
     if (logoutBtn) logoutBtn.addEventListener('click', (e)=>{
+        console.log('Logout button clicked');
         e.preventDefault();
         (0, _login.logout)();
     });
@@ -22851,11 +22853,14 @@ const login = async (email, password)=>{
     }
 };
 const logout = async ()=>{
+    console.log('Logout function called');
     try {
+        console.log('Making logout request...');
         const res = await (0, _axiosDefault.default)({
             method: 'GET',
             url: '/api/v1/users/logout'
         });
+        console.log('Logout response:', res.data);
         if (res.data.status === 'success') location.assign('/');
     } catch (err) {
         (0, _alerts.showAlert)('error', err.response.data.message);

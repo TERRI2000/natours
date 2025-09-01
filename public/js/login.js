@@ -24,11 +24,14 @@ export const login = async (email, password) => {
 };
 
 export const logout = async () => {
+  console.log('Logout function called');
   try {
+    console.log('Making logout request...');
     const res = await axios({
       method: 'GET',
       url: '/api/v1/users/logout', 
     });
+    console.log('Logout response:', res.data);
     if (res.data.status === 'success') location.assign('/');
   } catch (err) {
     showAlert('error', err.response.data.message);
