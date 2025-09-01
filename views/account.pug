@@ -111,7 +111,7 @@ block content
                     each user in users
                       tr(data-user-id=user._id)
                         td
-                          img.admin-table__image(src=`/img/users/${user.photo}`, alt=`${user.name}`)
+                          img.admin-table__image(src=user.photoUrl, alt=`${user.name}`)
                         td= user.name
                         td= user.email
                         td
@@ -249,7 +249,7 @@ block content
                     | ⚠️ This email address is not confirmed. 
                     a#resend-email-inline(href='#' style='color: #f39c12;') Click here to resend confirmation
               .form__group.form__photo-upload
-                img.form__user-photo(src=`/img/users/${user.photo}`, alt='User photo')
+                img.form__user-photo(src=user.photoUrl, alt='User photo')
                 input.form__upload(type='file', accept='image/*', id='photo', name='photo')
                 label(for='photo') Choose new photo
                 

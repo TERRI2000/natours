@@ -52,6 +52,23 @@ const userSchema = new mongoose.Schema({
   passwordResetExpires: Date,
 });
 
+// Віртуальне поле для правильного URL фото
+userSchema.virtual('photoUrl').get(function() {
+  if (!this.photo) return '/img/users/default.jpg';
+  
+  // Якщо це вже повний URL (Cloudinary), повертаємо як є
+  if (this.photo.startsWith('http')) {
+    return this.photo;
+  }
+  
+  // Якщо це локальний файл, додаємо префікс
+  return `/img/users/${this.photo}`;
+});
+
+// Включити віртуальні поля в JSON
+userSchema.set('toJSON', { virtuals: true });
+userSchema.set('toObject', { virtuals: true });
+
 userSchema.pre('save', async function (next) {
   // Only run this function if password was actually modified
   if (!this.isModified('password')) return next();
