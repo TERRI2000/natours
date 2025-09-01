@@ -335,7 +335,10 @@ document.addEventListener('DOMContentLoaded', ()=>{
     });
     // ===== ЛОГАУТ =====
     const logoutBtn = document.querySelector('.nav__el--logout');
-    if (logoutBtn) logoutBtn.addEventListener('click', (0, _login.logout));
+    if (logoutBtn) logoutBtn.addEventListener('click', (e)=>{
+        e.preventDefault();
+        (0, _login.logout)();
+    });
     // ===== ПОПЕРЕДНІЙ ПЕРЕГЛЯД ФОТО =====
     const filetag = document.querySelector('#photo');
     const preview = document.querySelector('.form__user-photo');

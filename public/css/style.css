@@ -2273,21 +2273,22 @@ body {
   /* Header adjustments */
   .header {
     padding: 0 3rem;
+    min-height: 50vh; /* Додаємо обмеження висоти для планшетів */
   }
   
   .header__nav {
     flex-direction: column;
-    gap: 2rem;
+    gap: 1.5rem; /* Зменшено з 2rem */
   }
   
   .nav__search {
     order: -1;
-    margin-bottom: 1.5rem;
+    margin-bottom: 1rem; /* Зменшено з 1.5rem */
   }
   
   /* Hero section */
   .header__hero {
-    padding: 8rem 0;
+    padding: 6rem 0; /* Зменшено з 8rem */
   }
   
   .heading-primary {
@@ -2344,41 +2345,48 @@ body {
   
   /* Header mobile */
   .header {
-    padding: 0 2rem;
+    padding: 0 1rem; /* Зменшено padding */
     height: auto;
-    min-height: 60vh;
+    min-height: 15vh; /* Зменшено з 25vh до 15vh */
   }
-  
+   
   .header__logo {
-    height: 4rem;
+    height: 2.5rem; /* Зменшено з 3rem */
   }
   
   .header__nav {
-    flex-direction: column;
+    flex-direction: row; /* Змінено на горизонтальне розташування */
     align-items: center;
-    gap: 1.5rem;
+    justify-content: space-between;
+    gap: 0.3rem; /* Зменшено gap */
+    flex-wrap: wrap; /* Дозволяємо перенос */
   }
   
   .nav__el {
-    padding: 1rem 1.5rem;
-    font-size: 1.4rem;
+    padding: 0.4rem 0.8rem; /* Ще менший padding */
+    font-size: 1.1rem; /* Зменшено font-size */
+  }
+  
+  .nav__user-img {
+    height: 2.5rem; /* Зменшено розмір аватара */
+    width: 2.5rem;
   }
   
   /* Hero section mobile */
   .header__hero {
-    padding: 4rem 0;
+    padding: 1rem 0; /* Зменшено до 1rem */
     text-align: center;
   }
   
   .heading-primary {
-    font-size: 3rem;
-    line-height: 1.2;
-    margin-bottom: 1.5rem;
+    font-size: 2.5rem; /* Зменшено з 3rem */
+    line-height: 1.1;
+    margin-bottom: 1rem; /* Зменшено з 1.5rem */
   }
   
   .heading-primary--sub {
-    font-size: 1.6rem;
-    margin-bottom: 3rem;
+    font-size: 1.4rem; /* Зменшено з 1.6rem */
+    margin-bottom: 2rem; /* Зменшено з 3rem */
   }
   
   /* Tour cards mobile */

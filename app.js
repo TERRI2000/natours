@@ -19,7 +19,10 @@ const viewRouter = require('./routes/viewRoutes');
 
 const app = express();
 
-app.enable('trust proxy');
+// Trust proxy тільки в production для безпеки
+if (process.env.NODE_ENV === 'production') {
+  app.set('trust proxy', 1);
+}
 
 app.set('view engine', 'pug');
 app.set('views', path.join(__dirname, 'views'));
@@ -83,6 +86,9 @@ const limiter = rateLimit({
   limit: 100, // limit each IP to 100 requests per windowMs
   windowMs: 60 * 60 * 1000, // 1 hour
   message: 'Too many requests from this IP, please try again in an hour!',
+  trustProxy: process.env.NODE_ENV === 'production', // Правильно налаштовуємо trust proxy
+  standardHeaders: true,
+  legacyHeaders: false,
 });
 app.use('/api', limiter);
 

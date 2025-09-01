@@ -142,7 +142,10 @@ document.addEventListener('DOMContentLoaded', () => {
   // ===== ЛОГАУТ =====
   const logoutBtn = document.querySelector('.nav__el--logout');
   if (logoutBtn) {
-    logoutBtn.addEventListener('click', logout);
+    logoutBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      logout();
+    });
   }
 
   // ===== ПОПЕРЕДНІЙ ПЕРЕГЛЯД ФОТО =====
