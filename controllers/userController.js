@@ -1,12 +1,11 @@
 const multer = require('multer');
 const sharp = require('sharp');
-const fs = require('fs');
-const path = require('path');
 const AppError = require('../utils/appError');
 const checkAccess = require('../utils/checkAccess');
 const User = require('./../models/userModel');
 const catchAsync = require('./../utils/catchAsync');
 const factory = require('./handleFactory');
+const { upload: cloudinaryUpload, cloudinary } = require('../utils/cloudinary');
 
 // const multerStorage = multer.diskStorage({
 //   destination: (req, file, cb) => {
@@ -42,7 +41,10 @@ const multerFilter = (req, file, cb) => {
   }
 };
 
-const upload = multer({ storage: multerStorage, fileFilter: multerFilter });
+// Використовуємо Cloudinary для production, локальний multer для development
+const upload = process.env.NODE_ENV === 'production' 
+  ? cloudinaryUpload 
+  : multer({ storage: multerStorage, fileFilter: multerFilter });
 
 exports.uploadUserPhoto = upload.single('photo');
 
@@ -54,6 +56,13 @@ exports.deleteUserPhoto = (req, res, next) => {
 exports.resizeUserPhoto = catchAsync(async (req, res, next) => {
   if (!req.file) return next();
 
+  if (process.env.NODE_ENV === 'production') {
+    // В production Cloudinary вже обробив зображення
+    req.file.filename = req.file.filename || req.file.path.split('/').pop();
+    return next();
+  }
+
+  // Для development - локальна обробка
   req.file.filename = `user-${req.user.id}-${Date.now()}.jpeg`;
 
   await sharp(req.file.buffer)
@@ -92,15 +101,19 @@ exports.updateMe = catchAsync(async (req, res, next) => {
 
   // 2) Filtered out unwanted fields names that are not allowed to be updated
   const filteredBody = filterObj(req.body, 'name', 'email');
-  if (req.file) filteredBody.photo = req.file.filename;
+  
+  // В production не оновлюємо фото через файлову систему
+  if (req.file && process.env.NODE_ENV !== 'production') {
+    filteredBody.photo = req.file.filename;
+  }
 
   // 3) Update user document
   const currentUser = await User.findById(req.user.id);
   const emailChanged = req.body.email && req.body.email !== currentUser.email;
   let updatedUser;
+  
   // 4) Якщо email змінився, скинути статус підтвердження та відправити новий токен
   if (emailChanged) {
-
     // Скинути статус підтвердження
     filteredBody.emailConfirmed = false;
 
