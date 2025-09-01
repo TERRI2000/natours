@@ -198,14 +198,14 @@ exports.isLoggedIn = catchAsync(async (req, res, next) => {
 });
 
 exports.logout = (req, res) => {
-  // Ensure all options match the ones used to set the cookie
   res.clearCookie('jwt', {
     path: '/',
     httpOnly: true,
     secure: req.secure || req.headers['x-forwarded-proto'] === 'https'
   });
   
-  res.status(200).json({ status: 'success' });
+  // Redirect to the home page after clearing the cookie
+  res.redirect('/');
 };
 
 exports.restrictTo = (...roles) => {
