@@ -27,30 +27,11 @@ const multerFilter = (req, file, cb) => {
   }
 };
 
-// Використовуємо Cloudinary для production, локальний multer для development
-const upload = process.env.NODE_ENV === 'production' 
-  ? cloudinaryUpload 
-  : multer({ storage: multerStorage, fileFilter: multerFilter });
-
-exports.uploadUserPhoto = upload.single('photo');
+// Завжди використовуємо Cloudinary для зображень
+exports.uploadUserPhoto = cloudinaryUpload.single('photo');
 
 exports.resizeUserPhoto = catchAsync(async (req, res, next) => {
-  if (!req.file) return next();
-
-  if (process.env.NODE_ENV === 'production') {
-    // В production Cloudinary автоматично обробляє зображення
-    // req.file.path містить URL від Cloudinary
-    return next();
-  }
-
-  // Для development - локальна обробка
-  req.file.filename = `user-${req.user.id}-${Date.now()}.jpeg`;
-
-  await sharp(req.file.buffer)
-    .resize(500, 500)
-    .toFormat('jpeg')
-    .jpeg({ quality: 90 })
-    .toFile(`public/img/users/${req.file.filename}`);
+  // Cloudinary автоматично обробляє зображення, тому просто переходимо далі
   next();
 });
 
@@ -83,15 +64,10 @@ exports.updateMe = catchAsync(async (req, res, next) => {
   // 2) Filtered out unwanted fields names that are not allowed to be updated
   const filteredBody = filterObj(req.body, 'name', 'email');
   
-  // 3) Обробка фото для production (Cloudinary) та development
+  // 3) Обробка фото - тимчасово завжди використовуємо Cloudinary
   if (req.file) {
-    if (process.env.NODE_ENV === 'production') {
-      // Cloudinary повертає URL зображення в req.file.path
-      filteredBody.photo = req.file.path;
-    } else {
-      // Development - локальне зберігання
-      filteredBody.photo = req.file.filename;
-    }
+    // Cloudinary повертає URL зображення в req.file.path або req.file.secure_url
+    filteredBody.photo = req.file.path || req.file.secure_url || req.file.filename;
   }
 
   // 3) Update user document
