@@ -22834,7 +22834,7 @@ const login = async (email, password)=>{
     try {
         const res = await (0, _axiosDefault.default)({
             method: 'POST',
-            url: '/api/v1/users/login',
+            url: 'api/v1/users/login',
             data: {
                 email,
                 password
