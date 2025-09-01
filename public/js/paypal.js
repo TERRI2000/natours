@@ -25,7 +25,7 @@ export const bookTourPayPal = async (tourId, tourDateId) => {
     // 2) Load PayPal script
     const paypal = await loadScript({
       'client-id':
-        'AVHFqN9QdZYmdE93KY45ZeVN7bJFPelwM_IbIEVvCl2z3E_w4n3MAEcq71sp4ILqJyDQMLmytzpKuNGA', // ⭐ ТЕСТОВИЙ SANDBOX ID
+        process.env.PAYPAL_CLIENT_ID, // ⭐ ТЕСТОВИЙ SANDBOX ID
       currency: 'USD',
     });
 
