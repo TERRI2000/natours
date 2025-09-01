@@ -19,6 +19,7 @@ const createSendToken = (user, statusCode, req, res) => {
     expires: new Date(
       Date.now() + process.env.JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000,
     ),
+    path: '/', // Explicitly set path
     secure: req.secure || req.headers['x-forwarded-proto'] === 'https', // true for HTTPS
     httpOnly: true, // prevents client-side JavaScript from accessing the cookie
   };
@@ -197,17 +198,12 @@ exports.isLoggedIn = catchAsync(async (req, res, next) => {
 });
 
 exports.logout = (req, res) => {
-  console.log('=== LOGOUT REQUEST ===');
-  console.log('Cookies before clear:', req.cookies);
-  
-  // Очищуємо cookie з ТОЧНО тими ж опціями, що й при встановленні
+  // Ensure all options match the ones used to set the cookie
   res.clearCookie('jwt', {
+    path: '/',
     httpOnly: true,
     secure: req.secure || req.headers['x-forwarded-proto'] === 'https'
   });
-  
-  console.log('Cookie cleared successfully');
-  console.log('=== END LOGOUT ===');
   
   res.status(200).json({ status: 'success' });
 };
