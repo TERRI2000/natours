@@ -22853,23 +22853,15 @@ const login = async (email, password)=>{
     }
 };
 const logout = async ()=>{
-    console.log('Logout function called');
     try {
-        console.log('Making logout request...');
         const res = await (0, _axiosDefault.default)({
             method: 'GET',
             url: '/api/v1/users/logout'
         });
-        console.log('Logout response:', res.data);
-        if (res.data.status === 'success') {
-            console.log('Logout successful, clearing cookies and redirecting...');
-            // Використовуємо location.reload() замість location.assign('/')
-            setTimeout(()=>{
-                location.assign('/');
-            }, 100);
-        }
+        if (res.data.status === 'success') setTimeout(()=>{
+            location.reload();
+        }, 200);
     } catch (err) {
-        console.error('Logout error:', err);
         (0, _alerts.showAlert)('error', err.response?.data?.message || 'Error logging out');
     }
 };
