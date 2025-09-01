@@ -197,7 +197,21 @@ exports.isLoggedIn = catchAsync(async (req, res, next) => {
 });
 
 exports.logout = (req, res) => {
-  res.clearCookie('jwt');
+  // Очищуємо cookie з правильними опціями
+  res.clearCookie('jwt', {
+    path: '/',
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax'
+  });
+  
+  // Додатково встановлюємо expired cookie
+  res.cookie('jwt', 'loggedout', {
+    expires: new Date(Date.now() + 10 * 1000), // 10 секунд
+    httpOnly: true,
+    path: '/'
+  });
+  
   res.status(200).json({ status: 'success' });
 };
 
