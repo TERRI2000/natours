@@ -32,9 +32,18 @@ export const logout = async () => {
       url: '/api/v1/users/logout', 
     });
     console.log('Logout response:', res.data);
-    if (res.data.status === 'success') location.assign('/');
+    if (res.data.status === 'success') {
+      console.log('Logout successful, clearing cookies and redirecting...');
+      // Очищаємо cookies вручну на фронтенді
+      document.cookie = 'jwt=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+      // Використовуємо location.reload() замість location.assign('/')
+      setTimeout(() => {
+        location.reload();
+      }, 100);
+    }
   } catch (err) {
-    showAlert('error', err.response.data.message);
+    console.error('Logout error:', err);
+    showAlert('error', err.response?.data?.message || 'Error logging out');
   }
 };
 
