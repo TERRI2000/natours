@@ -22,6 +22,13 @@ export const bookTourPayPal = async (tourId, tourDateId) => {
       `/api/v1/bookings/checkout-session/${tourId}`,
     );
 
+    // Перевіряємо чи є paypalClientId
+    if (!session.data.paypalClientId) {
+      showAlert('error', 'PayPal configuration error. Please contact support.');
+      if (bookBtn) bookBtn.style.display = 'block';
+      return;
+    }
+
     // 2) Load PayPal script
     const paypal = await loadScript({
       'client-id': session.data.paypalClientId, // Отримуємо з API
