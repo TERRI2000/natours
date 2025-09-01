@@ -334,12 +334,17 @@ document.addEventListener('DOMContentLoaded', ()=>{
         (0, _login.login)(email, password);
     });
     // ===== ЛОГАУТ =====
+    console.log('Looking for logout button...');
     const logoutBtn = document.querySelector('.nav__el--logout');
-    if (logoutBtn) logoutBtn.addEventListener('click', (e)=>{
-        console.log('Logging out...');
-        e.preventDefault();
-        (0, _login.logout)();
-    });
+    console.log('Logout button found:', !!logoutBtn);
+    if (logoutBtn) {
+        console.log('Adding click event listener to logout button');
+        logoutBtn.addEventListener('click', (e)=>{
+            console.log('Logout button clicked via event listener');
+            e.preventDefault();
+            (0, _login.logout)();
+        });
+    }
     // ===== ПОПЕРЕДНІЙ ПЕРЕГЛЯД ФОТО =====
     const filetag = document.querySelector('#photo');
     const preview = document.querySelector('.form__user-photo');
@@ -22852,15 +22857,20 @@ const login = async (email, password)=>{
     }
 };
 const logout = async ()=>{
+    console.log('Frontend logout function called');
     try {
         const res = await (0, _axiosDefault.default)({
             method: 'GET',
             url: '/api/v1/users/logout'
         });
-        if (res.data.status === 'success') setTimeout(()=>{
-            location.reload();
-        }, 1000);
+        console.log('Logout response:', res.data);
+        if (res.data.status === 'success') {
+            console.log('Logout successful, redirecting...');
+            // Миттєво перенаправляємо без затримки
+            location.assign('/');
+        }
     } catch (err) {
+        console.log('Logout error:', err);
         (0, _alerts.showAlert)('error', err.response?.data?.message || 'Error logging out');
     }
 };

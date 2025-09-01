@@ -24,18 +24,20 @@ export const login = async (email, password) => {
 };
 
 export const logout = async () => {
-
+  console.log('Frontend logout function called');
   try {
     const res = await axios({
       method: 'GET',
       url: '/api/v1/users/logout', 
     });
+    console.log('Logout response:', res.data);
     if (res.data.status === 'success') {
-      setTimeout(() => {
-        location.reload();
-      }, 1000);
+      console.log('Logout successful, redirecting...');
+      // Миттєво перенаправляємо без затримки
+      location.assign('/');
     }
   } catch (err) {
+    console.log('Logout error:', err);
     showAlert('error', err.response?.data?.message || 'Error logging out');
   }
 };

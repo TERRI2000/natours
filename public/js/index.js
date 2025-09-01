@@ -140,10 +140,14 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // ===== ЛОГАУТ =====
+  console.log('Looking for logout button...');
   const logoutBtn = document.querySelector('.nav__el--logout');
+  console.log('Logout button found:', !!logoutBtn);
+  
   if (logoutBtn) {
+    console.log('Adding click event listener to logout button');
     logoutBtn.addEventListener('click', (e) => {
-      console.log('Logging out...');
+      console.log('Logout button clicked via event listener');
       e.preventDefault();
       logout();
     });

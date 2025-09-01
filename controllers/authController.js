@@ -197,13 +197,24 @@ exports.isLoggedIn = catchAsync(async (req, res, next) => {
 });
 
 exports.logout = (req, res) => {
+  console.log('=== LOGOUT REQUEST ===');
+  console.log('Method:', req.method);
+  console.log('URL:', req.url);
+  console.log('Headers:', req.headers);
+  console.log('Cookies before clear:', req.cookies);
+  console.log('Secure:', req.secure);
+  console.log('X-Forwarded-Proto:', req.headers['x-forwarded-proto']);
+  
   // Очищуємо cookie з ТОЧНО тими ж опціями, що й при встановленні
   res.clearCookie('jwt', {
     path: '/',
     httpOnly: true,
     secure: req.secure || req.headers['x-forwarded-proto'] === 'https'
   });
-  console.log(res.data);
+  
+  console.log('Cookie cleared successfully');
+  console.log('=== END LOGOUT ===');
+  
   res.status(200).json({ status: 'success' });
 };
 
