@@ -336,8 +336,8 @@ document.addEventListener('DOMContentLoaded', ()=>{
     // ===== ЛОГАУТ =====
     const logoutBtn = document.querySelector('.nav__el--logout');
     if (logoutBtn) logoutBtn.addEventListener('click', (e)=>{
+        console.log('Logging out...');
         e.preventDefault();
-        // Fallback for event listener approach
         (0, _login.logout)();
     });
     // ===== ПОПЕРЕДНІЙ ПЕРЕГЛЯД ФОТО =====
@@ -22859,7 +22859,7 @@ const logout = async ()=>{
         });
         if (res.data.status === 'success') setTimeout(()=>{
             location.reload();
-        }, 200);
+        }, 1000);
     } catch (err) {
         (0, _alerts.showAlert)('error', err.response?.data?.message || 'Error logging out');
     }

@@ -203,7 +203,7 @@ exports.logout = (req, res) => {
     httpOnly: true,
     secure: req.secure || req.headers['x-forwarded-proto'] === 'https'
   });
-  
+  console.log(res.data);
   res.status(200).json({ status: 'success' });
 };
 

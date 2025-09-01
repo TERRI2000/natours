@@ -143,8 +143,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const logoutBtn = document.querySelector('.nav__el--logout');
   if (logoutBtn) {
     logoutBtn.addEventListener('click', (e) => {
+      console.log('Logging out...');
       e.preventDefault();
-      // Fallback for event listener approach
       logout();
     });
   }
