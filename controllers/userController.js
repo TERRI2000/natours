@@ -34,13 +34,12 @@ const upload = process.env.NODE_ENV === 'production'
 
 exports.uploadUserPhoto = upload.single('photo');
 
-
 exports.resizeUserPhoto = catchAsync(async (req, res, next) => {
   if (!req.file) return next();
 
   if (process.env.NODE_ENV === 'production') {
-    // В production Cloudinary вже обробив зображення
-    req.file.filename = req.file.filename || req.file.path.split('/').pop();
+    // В production Cloudinary автоматично обробляє зображення
+    // req.file.path містить URL від Cloudinary
     return next();
   }
 
@@ -84,9 +83,15 @@ exports.updateMe = catchAsync(async (req, res, next) => {
   // 2) Filtered out unwanted fields names that are not allowed to be updated
   const filteredBody = filterObj(req.body, 'name', 'email');
   
-  // В production не оновлюємо фото через файлову систему
-  if (req.file && process.env.NODE_ENV !== 'production') {
-    filteredBody.photo = req.file.filename;
+  // 3) Обробка фото для production (Cloudinary) та development
+  if (req.file) {
+    if (process.env.NODE_ENV === 'production') {
+      // Cloudinary повертає URL зображення в req.file.path
+      filteredBody.photo = req.file.path;
+    } else {
+      // Development - локальне зберігання
+      filteredBody.photo = req.file.filename;
+    }
   }
 
   // 3) Update user document
