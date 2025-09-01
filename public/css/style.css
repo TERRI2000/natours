@@ -2253,3 +2253,235 @@ body {
   font-style: italic;
   color: #666;
 }
+
+/* ===== MOBILE RESPONSIVE STYLES ===== */
+
+/* Tablets (768px and down) */
+@media only screen and (max-width: 48em) {
+  html {
+    font-size: 56.25%; /* 9px */
+  }
+  
+  body {
+    padding: 2rem;
+  }
+  
+  .main {
+    padding: 4rem 3rem;
+  }
+  
+  /* Header adjustments */
+  .header {
+    padding: 0 3rem;
+  }
+  
+  .header__nav {
+    flex-direction: column;
+    gap: 2rem;
+  }
+  
+  .nav__search {
+    order: -1;
+    margin-bottom: 1.5rem;
+  }
+  
+  /* Hero section */
+  .header__hero {
+    padding: 8rem 0;
+  }
+  
+  .heading-primary {
+    font-size: 4rem;
+  }
+  
+  /* Tour overview grid */
+  .card-container {
+    grid-template-columns: repeat(auto-fit, minmax(30rem, 1fr));
+    gap: 4rem 2rem;
+  }
+  
+  /* User account pages */
+  .user-view {
+    flex-direction: column;
+  }
+  
+  .user-view__menu {
+    width: 100%;
+    margin-bottom: 3rem;
+  }
+  
+  .user-view__content {
+    max-width: 100%;
+  }
+  
+  /* Admin tables */
+  .admin-table {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+    font-size: 1.3rem;
+  }
+  
+  .admin-table th,
+  .admin-table td {
+    padding: 1rem;
+  }
+}
+
+/* Mobile phones (480px and down) */
+@media only screen and (max-width: 30em) {
+  html {
+    font-size: 50%; /* 8px */
+  }
+  
+  body {
+    padding: 1rem;
+  }
+  
+  .main {
+    padding: 2rem 1rem;
+  }
+  
+  /* Header mobile */
+  .header {
+    padding: 0 2rem;
+    height: auto;
+    min-height: 60vh;
+  }
+  
+  .header__logo {
+    height: 4rem;
+  }
+  
+  .header__nav {
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+  }
+  
+  .nav__el {
+    padding: 1rem 1.5rem;
+    font-size: 1.4rem;
+  }
+  
+  /* Hero section mobile */
+  .header__hero {
+    padding: 4rem 0;
+    text-align: center;
+  }
+  
+  .heading-primary {
+    font-size: 3rem;
+    line-height: 1.2;
+    margin-bottom: 1.5rem;
+  }
+  
+  .heading-primary--sub {
+    font-size: 1.6rem;
+    margin-bottom: 3rem;
+  }
+  
+  /* Tour cards mobile */
+  .card-container {
+    grid-template-columns: 1fr;
+    gap: 3rem;
+  }
+  
+  .card {
+    max-width: 35rem;
+    margin: 0 auto;
+  }
+  
+  /* Tour detail mobile */
+  .section-header {
+    padding: 25rem 0 8rem 0;
+  }
+  
+  .heading-box {
+    padding: 0 2rem;
+    text-align: center;
+  }
+  
+  /* Account/User view mobile */
+  .user-view__menu {
+    padding: 2rem;
+  }
+  
+  .side-nav a:link,
+  .side-nav a:visited {
+    padding: 1rem 2rem;
+    font-size: 1.4rem;
+  }
+  
+  .side-nav svg {
+    height: 1.6rem;
+    width: 1.6rem;
+    margin-right: 1.5rem;
+  }
+  
+  .user-view__form-container {
+    padding: 2rem;
+  }
+  
+  /* Forms mobile */
+  .form__group:not(:last-child) {
+    margin-bottom: 2rem;
+  }
+  
+  .form__input {
+    font-size: 1.4rem;
+    padding: 1rem 1.5rem;
+  }
+  
+  /* Admin tables mobile */
+  .admin-section {
+    padding: 2rem;
+    overflow-x: auto;
+  }
+  
+  .admin-table {
+    min-width: 60rem;
+    font-size: 1.2rem;
+  }
+  
+  .admin-table th,
+  .admin-table td {
+    padding: 0.8rem 1rem;
+    white-space: nowrap;
+  }
+  
+  .admin-actions {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  /* Modal mobile */
+  .modal__content {
+    width: 95%;
+    max-width: none;
+    padding: 2rem;
+    margin: 2rem auto;
+    max-height: 90vh;
+    overflow-y: auto;
+  }
+  
+  /* Reviews mobile */
+  .reviews {
+    padding: 0 1rem;
+  }
+  
+  .review {
+    padding: 2rem;
+    margin-bottom: 2rem;
+  }
+  
+  .review__avatar {
+    width: 4rem;
+    height: 4rem;
+  }
+  
+  .reviews__star {
+    height: 1.4rem;
+    width: 1.4rem;
+  }
+}
