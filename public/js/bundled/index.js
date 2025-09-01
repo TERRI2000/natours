@@ -334,21 +334,21 @@ document.addEventListener('DOMContentLoaded', ()=>{
         (0, _login.login)(email, password);
     });
     // ===== ЛОГАУТ =====
-    console.log('Looking for logout button...');
-    const logoutBtn = document.querySelector('.nav__el--logout');
-    console.log('Logout button found:', !!logoutBtn);
-    if (logoutBtn) {
-        console.log('Adding click event listener to logout button');
-        logoutBtn.addEventListener('click', (e)=>{
-            console.log('=== LOGOUT CLICK EVENT TRIGGERED ===');
-            console.log('Event target:', e.target);
-            console.log('Event type:', e.type);
-            e.preventDefault();
-            e.stopPropagation();
-            console.log('Calling logout function...');
-            (0, _login.logout)();
-        });
-    }
+    // console.log('Looking for logout button...');
+    // const logoutBtn = document.querySelector('.nav__el--logout');
+    // console.log('Logout button found:', !!logoutBtn);
+    // if (logoutBtn) {
+    //   console.log('Adding click event listener to logout button');
+    //   logoutBtn.addEventListener('click', (e) => {
+    //     console.log('=== LOGOUT CLICK EVENT TRIGGERED ===');
+    //     console.log('Event target:', e.target);
+    //     console.log('Event type:', e.type);
+    //     e.preventDefault();
+    //     e.stopPropagation();
+    //     console.log('Calling logout function...');
+    //     logout();
+    //   });
+    // }
     // ===== ПОПЕРЕДНІЙ ПЕРЕГЛЯД ФОТО =====
     const filetag = document.querySelector('#photo');
     const preview = document.querySelector('.form__user-photo');
