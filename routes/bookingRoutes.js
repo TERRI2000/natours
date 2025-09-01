@@ -4,6 +4,9 @@ const authController = require('./../controllers/authController');
 
 const router = express.Router({ mergeParams: true });
 
+// PayPal Webhook (має бути БЕЗ аутентифікації!)
+router.post('/webhook-checkout', express.raw({ type: 'application/json' }), bookingController.handlePayPalWebhook);
+
 router.use(authController.protect);
 router.use(authController.requireEmailConfirmed); // Only confirmed users
 router.get('/checkout-session/:tourId', bookingController.getCheckoutSession);

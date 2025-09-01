@@ -139,6 +139,26 @@ exports.createBookingFromPayPal = catchAsync(async (req, res, next) => {
   });
 });
 
+// PayPal Webhook handler
+exports.handlePayPalWebhook = catchAsync(async (req, res, next) => {
+  const event = req.body;
+  
+  // Обробляємо тільки завершені замовлення
+  if (event.event_type === 'CHECKOUT.ORDER.COMPLETED') {
+    const order = event.resource;
+    
+    // Знайти booking за PayPal Order ID і підтвердити платіж
+    const booking = await Booking.findOne({ paypalOrderId: order.id });
+    
+    if (booking && !booking.paid) {
+      booking.paid = true;
+      await booking.save();
+    }
+  }
+  
+  res.status(200).send('OK');
+});
+
 exports.checkIfBooked = catchAsync(async (req, res, next) => {
   // To check if booked was bought by user who wants to review it
   const booking = await Booking.find({
