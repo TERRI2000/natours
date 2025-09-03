@@ -1,11 +1,9 @@
-const multer = require('multer');
-const sharp = require('sharp');
 const AppError = require('../utils/appError');
 const checkAccess = require('../utils/checkAccess');
 const User = require('./../models/userModel');
 const catchAsync = require('./../utils/catchAsync');
 const factory = require('./handleFactory');
-const { upload: cloudinaryUpload, cloudinary } = require('../utils/cloudinary');
+const { upload, cloudinary } = require('../utils/cloudinary');
 
 // const multerStorage = multer.diskStorage({
 //   destination: (req, file, cb) => {
@@ -28,7 +26,7 @@ const { upload: cloudinaryUpload, cloudinary } = require('../utils/cloudinary');
 // };
 
 // Завжди використовуємо Cloudinary для зображень
-exports.uploadUserPhoto = cloudinaryUpload.single('photo');
+exports.uploadUserPhoto = upload.single('photo');
 
 exports.resizeUserPhoto = catchAsync(async (req, res, next) => {
   // Cloudinary автоматично обробляє зображення, тому просто переходимо далі

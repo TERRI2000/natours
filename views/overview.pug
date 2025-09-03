@@ -9,7 +9,8 @@ block content
           .card__header
             .card__picture
               .card__picture-overlay &nbsp;
-              img.card__picture-img(src=`/img/tours/${tour.imageCover}`, alt=`${tour.name}`)
+              - const tourImageCoverSrc = tour.imageCover && tour.imageCover.startsWith('http') ? tour.imageCover : `/img/tours/${tour.imageCover}`
+              img.card__picture-img(src=tourImageCoverSrc, alt=`${tour.name}`)
             h3.heading-tertirary
               span= tour.name
 

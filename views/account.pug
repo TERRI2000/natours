@@ -73,7 +73,7 @@ block content
 
           //- ===== ADMIN: MANAGE TOURS =====
           else if currentPage === 'admin-tours'
-            .admin-header
+            .admin-header(style='display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;')
               h2.heading-secondary Manage Tours
               button.btn.btn--green#create-tour-btn Create New Tour
 
@@ -294,6 +294,10 @@ block content
       .form__group
         label.form__label(for="modal-review") Review
         textarea#modal-review.form__input(rows="4", required, placeholder="Share your experience...")
+
+  //- Модальне вікно для створення/редагування туру через міксин
+  +formModal('tour-modal', 'Tour')
+    +tourFormModal()
 
   //- Модальні вікна підтвердження
   +confirmModal('delete-confirm-modal', 'Delete Review', 'Are you sure you want to delete this review? This action cannot be undone.', 'Delete Review', 'Cancel', 'btn--red')

@@ -1,55 +1,41 @@
-const multer = require('multer');
 const Tour = require('./../models/tourModel');
 const catchAsync = require('./../utils/catchAsync');
 const AppError = require('./../utils/appError');
 const factory = require('./handleFactory');
+const { tourUpload } = require('../utils/cloudinary');
 
-const multerStorage = multer.memoryStorage();
-
-const multerFilter = (req, file, cb) => {
-  if (file.mimetype.startsWith('image')) {
-    cb(null, true);
-  } else {
-    cb(new AppError('Not an image! Please upload only images.', 400), false);
-  }
-};
-
-const upload = multer({ storage: multerStorage, fileFilter: multerFilter });
-
-exports.uploadTourImages = upload.fields([
+// Використовуємо Cloudinary для завантаження зображень турів
+exports.uploadTourImages = tourUpload.fields([
   { name: 'imageCover', maxCount: 1 },
   { name: 'images', maxCount: 3 },
 ]);
 
-// upload.single('image') req.file
-// upload.array('images', 5) req.files
-
 exports.resizeTourImages = catchAsync(async (req, res, next) => {
-  if (!req.files.imageCover || !req.files.images) return next();
 
-  // 1) Cover image
-  req.body.imageCover = `tour-${req.params.id}-${Date.now()}-cover.jpeg`;
-  await sharp(req.files.imageCover[0].buffer)
-    .resize(2000, 1333)
-    .toFormat('jpeg')
-    .jpeg({ quality: 90 })
-    .toFile(`public/img/tours/${req.body.imageCover}`);
+  if (req.files) {
+    if (req.files.imageCover && req.files.imageCover[0]) {
+      req.body.imageCover = req.files.imageCover[0].path || req.files.imageCover[0].secure_url;
+    }
+    
+    if (req.files.images && req.files.images.length > 0) {
+      req.body.images = req.files.images.map(file => file.path || file.secure_url);
+    }
+  }
+  
+  next();
+});
 
-  // 2) Images
-  req.body.images = [];
-  await Promise.all(
-    req.files.images.map(async (file, i) => {
-      const filename = `tour-${req.params.id}-${Date.now()}-${i + 1}.jpeg`;
-
-      await sharp(file.buffer)
-        .resize(2000, 1333)
-        .toFormat('jpeg')
-        .jpeg({ quality: 90 })
-        .toFile(`public/img/tours/${filename}`);
-
-      req.body.images.push(filename);
-    }),
-  );
+// Middleware для парсингу JSON полів з FormData
+exports.parseJSONFields = catchAsync(async (req, res, next) => {
+  // Парсити startLocation якщо це строка
+  if (req.body.startLocation && typeof req.body.startLocation === 'string') {
+    try {
+      req.body.startLocation = JSON.parse(req.body.startLocation);
+    } catch (err) {
+      return next(new AppError('Invalid startLocation format', 400));
+    }
+  }
+  
   next();
 });
 

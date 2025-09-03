@@ -42,3 +42,43 @@ mixin infoModal(id, title, message, buttonText, buttonClass)
       
       .modal__actions
         button.btn(class=buttonClass || 'btn--green').modal__close-btn= buttonText || 'OK'
+
+//- Міксин для форми туру
+mixin tourFormModal()
+  form#tour-modal-form.form
+    input#tour-id(type='hidden')
+    .form__group
+      label.form__label(for='tour-name') Name
+      input#tour-name.form__input(type='text', required, minlength='10', placeholder='Tour name')
+    .form__group
+      label.form__label(for='tour-price') Price
+      input#tour-price.form__input(type='number', min='0', required, placeholder='Price')
+    .form__group
+      label.form__label(for='tour-duration') Duration (days)
+      input#tour-duration.form__input(type='number', min='1', required, placeholder='Duration')
+    .form__group
+      label.form__label(for='tour-max-group-size') Max Group Size
+      input#tour-max-group-size.form__input(type='number', min='1', required, placeholder='Max group size')
+    .form__group
+      label.form__label(for='tour-difficulty') Difficulty
+      select#tour-difficulty.form__input(required)
+        option(value='') Select difficulty
+        option(value='easy') Easy
+        option(value='medium') Medium
+        option(value='difficult') Difficult
+    .form__group
+      label.form__label(for='tour-summary') Summary
+      textarea#tour-summary.form__input(rows='2', required, placeholder='Short summary')
+    .form__group
+      label.form__label(for='tour-description') Description
+      textarea#tour-description.form__input(rows='4', required, placeholder='Full description')
+    .form__group
+      label.form__label(for='tour-image-cover') Cover Image
+      div#current-image-info(style='margin-top: 0.5rem; font-size: 0.9em; color: #888;') Selected: None
+      img#tour-image-preview.form__user-photo(src='/img/users/default.jpg', alt='Tour cover', style='max-width: 120px; display: block; margin-top: 1rem;')
+      input#tour-image-cover.form__upload(type='file', accept='image/*', name='imageCover')
+      label(for='tour-image-cover', style='display: inline-block; padding: 0.8rem 2rem; background-color: #55c57a; color: white; border-radius: 3px; cursor: pointer; margin-top: 1rem; font-size: 1.4rem;') Choose Image
+      
+    .form__group
+      label.form__label(for='tour-start-location-desc') Start Location (description)
+      input#tour-start-location-desc.form__input(type='text', placeholder='Start location description')

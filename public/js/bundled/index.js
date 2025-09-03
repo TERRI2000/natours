@@ -618,7 +618,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
             }
         });
         // ОБРОБНИК ДЛЯ ЗАВАНТАЖЕННЯ ФОТО
-        const setupImageUpload1 = ()=>{
+        const setupImageUpload = ()=>{
             const imageInput = document.getElementById('tour-image-cover');
             const imagePreview = document.getElementById('tour-image-preview');
             if (imageInput && imagePreview) {
@@ -762,7 +762,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
         };
         // Додати setup для завантаження зображень
         setTimeout(()=>{
-            setupImageUpload1();
+            setupImageUpload();
         }, 500);
     }
     // ===== ADMIN: EVENT DELEGATION FOR DYNAMIC CONTENT =====
@@ -773,45 +773,71 @@ document.addEventListener('DOMContentLoaded', ()=>{
             const tourId = e.target.dataset.tourId;
             try {
                 const tour = await (0, _admin.getTour)(tourId);
-                // Заповнити форму тільки тими полями які можна редагувати
-                document.getElementById('tour-id').value = tour._id || '';
-                document.getElementById('tour-name').value = tour.name || '';
-                document.getElementById('tour-price').value = tour.price || '';
-                document.getElementById('tour-duration').value = tour.duration || '';
-                document.getElementById('tour-max-group-size').value = tour.maxGroupSize || 15;
-                document.getElementById('tour-difficulty').value = tour.difficulty || '';
-                document.getElementById('tour-summary').value = tour.summary || '';
-                document.getElementById('tour-description').value = tour.description || '';
-                // НЕ ВСТАНОВЛЮЙТЕ ЗНАЧЕННЯ ДЛЯ FILE INPUT!
-                // Замість цього очистіть поле файлу і покажіть поточне зображення
-                const fileInput = document.getElementById('tour-image-cover');
-                if (fileInput) fileInput.value = ''; // Очистити input файлу
-                // Показати поточну обкладинку в preview
-                const imagePreview = document.getElementById('tour-image-preview');
-                const currentImageInfo = document.getElementById('current-image-info');
-                if (imagePreview && tour.imageCover) {
-                    imagePreview.src = `/img/tours/${tour.imageCover}`;
-                    imagePreview.onerror = function() {
-                        this.src = '/img/users/default.jpg';
-                    };
-                    if (currentImageInfo) currentImageInfo.textContent = `Current: ${tour.imageCover}`;
-                } else if (imagePreview) {
-                    imagePreview.src = '/img/users/default.jpg';
-                    if (currentImageInfo) currentImageInfo.textContent = 'Current: No image selected';
-                }
-                // Start Location
-                if (tour.startLocation && tour.startLocation.description) document.getElementById('tour-start-location-desc').value = tour.startLocation.description;
-                else document.getElementById('tour-start-location-desc').value = '';
-                // Змінити заголовок модального вікна
-                const modalTitle = document.querySelector('#tour-modal .heading-tertiary');
-                if (modalTitle) modalTitle.textContent = 'Edit Tour';
+                // Спочатку відкрити modal
                 openModal('tour-modal');
-                // Переконатися що обробники встановлені
+                // Дати час для відкриття modal перед заповненням форми
                 setTimeout(()=>{
-                    setupImageUpload();
+                    try {
+                        // Перевірити всі елементи перед заповненням
+                        const elements = {
+                            'tour-id': document.getElementById('tour-id'),
+                            'tour-name': document.getElementById('tour-name'),
+                            'tour-price': document.getElementById('tour-price'),
+                            'tour-duration': document.getElementById('tour-duration'),
+                            'tour-max-group-size': document.getElementById('tour-max-group-size'),
+                            'tour-difficulty': document.getElementById('tour-difficulty'),
+                            'tour-summary': document.getElementById('tour-summary'),
+                            'tour-description': document.getElementById('tour-description')
+                        };
+                        // Заповнити тільки існуючі елементи
+                        if (elements['tour-id']) elements['tour-id'].value = tour._id || '';
+                        if (elements['tour-name']) elements['tour-name'].value = tour.name || '';
+                        if (elements['tour-price']) elements['tour-price'].value = tour.price || '';
+                        if (elements['tour-duration']) elements['tour-duration'].value = tour.duration || '';
+                        if (elements['tour-max-group-size']) elements['tour-max-group-size'].value = tour.maxGroupSize || 15;
+                        if (elements['tour-difficulty']) elements['tour-difficulty'].value = tour.difficulty || '';
+                        if (elements['tour-summary']) elements['tour-summary'].value = tour.summary || '';
+                        if (elements['tour-description']) elements['tour-description'].value = tour.description || '';
+                        // Очистити поле файлу і показати поточне зображення
+                        const fileInput = document.getElementById('tour-image-cover');
+                        if (fileInput) fileInput.value = '';
+                        // Показати поточну обкладинку в preview
+                        const imagePreview = document.getElementById('tour-image-preview');
+                        const currentImageInfo = document.getElementById('current-image-info');
+                        if (imagePreview && tour.imageCover) {
+                            // Якщо це Cloudinary URL (починається з https), використовуємо як є
+                            if (tour.imageCover.startsWith('http')) imagePreview.src = tour.imageCover;
+                            else // Якщо це звичайний файл, додаємо локальний шлях
+                            imagePreview.src = `/img/tours/${tour.imageCover}`;
+                            imagePreview.onerror = function() {
+                                this.src = '/img/users/default.jpg';
+                            };
+                            if (currentImageInfo) currentImageInfo.textContent = `Current: ${tour.imageCover.split('/').pop()}`;
+                        } else if (imagePreview) {
+                            imagePreview.src = '/img/users/default.jpg';
+                            if (currentImageInfo) currentImageInfo.textContent = 'Current: No image selected';
+                        }
+                        // Start Location
+                        if (tour.startLocation && tour.startLocation.description) document.getElementById('tour-start-location-desc').value = tour.startLocation.description;
+                        else document.getElementById('tour-start-location-desc').value = '';
+                        // Змінити заголовок модального вікна
+                        const modalTitle = document.querySelector('#tour-modal .heading-tertiary');
+                        if (modalTitle) modalTitle.textContent = 'Edit Tour';
+                    } catch (formError) {
+                        (0, _alerts.showAlert)('error', 'Error opening tour editor');
+                    }
                 }, 100);
-            } catch (err) {
+            } catch (error) {
                 (0, _alerts.showAlert)('error', 'Error loading tour data');
+            }
+        }
+        // ===== FILE INPUT CHANGE HANDLER =====
+        if (e.target && e.target.id === 'tour-image-cover') {
+            const file = e.target.files[0];
+            const currentImageInfo = document.getElementById('current-image-info');
+            if (file && currentImageInfo) {
+                currentImageInfo.textContent = `Selected: ${file.name}`;
+                currentImageInfo.style.color = '#55c57a';
             }
         }
         if (e.target.classList.contains('admin-delete-tour-btn')) {
@@ -22861,20 +22887,13 @@ const login = async (email, password)=>{
     }
 };
 const logout = async ()=>{
-    console.log('Frontend logout function called');
     try {
         const res = await (0, _axiosDefault.default)({
             method: 'GET',
             url: '/api/v1/users/logout'
         });
-        console.log('Logout response:', res.data);
-        if (res.data.status === 'success') {
-            console.log('Logout successful, redirecting...');
-            // Миттєво перенаправляємо без затримки
-            location.assign('/');
-        }
+        if (res.data.status === 'success') location.assign('/');
     } catch (err) {
-        console.log('Logout error:', err);
         (0, _alerts.showAlert)('error', err.response?.data?.message || 'Error logging out');
     }
 };
@@ -23402,7 +23421,7 @@ const loadTours = async ()=>{
         tableBody.innerHTML = tours.map((tour)=>`
       <tr data-tour-id="${tour._id}">
         <td>
-          ${tour.imageCover ? `<img src="/img/tours/${tour.imageCover}" alt="${tour.name}" class="admin-table__image" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+          ${tour.imageCover ? `<img src="${tour.imageCover.startsWith('http') ? tour.imageCover : `/img/tours/${tour.imageCover}`}" alt="${tour.name}" class="admin-table__image" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
              <div class="admin-table__image-placeholder" style="display: none;">
                <span>No Image</span>
              </div>` : `<div class="admin-table__image-placeholder">
@@ -23436,14 +23455,8 @@ const loadTours = async ()=>{
 const getTour = async (tourId)=>{
     try {
         const res = await (0, _axiosDefault.default).get(`/api/v1/tours/${tourId}`);
-        // Правильний доступ до даних туру
-        let tour;
-        if (res.data.data && res.data.data.tour) // Якщо це один тур, він може бути в data.tour
-        tour = res.data.data.tour;
-        else if (res.data.data && res.data.data.data) // Стандартна структура
-        tour = res.data.data.data;
-        else if (res.data.data) tour = res.data.data;
-        else throw new Error('No tour data found in response');
+        const tour = res.data.data.data;
+        if (!tour) throw new Error('No tour data found in response');
         return tour;
     } catch (err) {
         throw err;

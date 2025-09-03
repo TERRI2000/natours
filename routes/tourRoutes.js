@@ -57,6 +57,7 @@ router
     authController.restrictTo('admin', 'lead-guide'),
     tourController.uploadTourImages,
     tourController.resizeTourImages,
+    tourController.parseJSONFields,
     tourController.updateTour,
   )
   .delete(

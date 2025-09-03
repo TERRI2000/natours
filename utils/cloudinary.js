@@ -14,8 +14,8 @@ if (process.env.CLOUDINARY_URL) {
   });
 }
 
-// Налаштування сховища для multer
-const storage = new CloudinaryStorage({
+// Налаштування сховища для користувачів
+const userStorage = new CloudinaryStorage({
   cloudinary: cloudinary,
   params: {
     folder: 'natours/users', // папка в Cloudinary
@@ -26,8 +26,20 @@ const storage = new CloudinaryStorage({
   },
 });
 
+// Налаштування сховища для турів
+const tourStorage = new CloudinaryStorage({
+  cloudinary: cloudinary,
+  params: {
+    folder: 'natours/tours', // папка в Cloudinary
+    allowed_formats: ['jpg', 'jpeg', 'png'],
+    transformation: [
+      { width: 2000, height: 1333, crop: 'fill' }
+    ],
+  },
+});
+
 const upload = multer({ 
-  storage: storage,
+  storage: userStorage,
   fileFilter: (req, file, cb) => {
     if (file.mimetype.startsWith('image')) {
       cb(null, true);
@@ -37,4 +49,15 @@ const upload = multer({
   }
 });
 
-module.exports = { upload, cloudinary };
+const tourUpload = multer({ 
+  storage: tourStorage,
+  fileFilter: (req, file, cb) => {
+    if (file.mimetype.startsWith('image')) {
+      cb(null, true);
+    } else {
+      cb(new AppError('Not an image! Please upload only images.', 400), false);
+    }
+  }
+});
+
+module.exports = { upload, tourUpload, cloudinary };

@@ -50,7 +50,7 @@ export const loadTours = async () => {
       <tr data-tour-id="${tour._id}">
         <td>
           ${tour.imageCover ? 
-            `<img src="/img/tours/${tour.imageCover}" alt="${tour.name}" class="admin-table__image" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+            `<img src="${tour.imageCover.startsWith('http') ? tour.imageCover : `/img/tours/${tour.imageCover}`}" alt="${tour.name}" class="admin-table__image" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
              <div class="admin-table__image-placeholder" style="display: none;">
                <span>No Image</span>
              </div>` 
@@ -96,25 +96,12 @@ export const getTour = async (tourId) => {
   try {
     const res = await axios.get(`/api/v1/tours/${tourId}`);
 
-    // Правильний доступ до даних туру
-    let tour;
-    if (res.data.data && res.data.data.tour) {
-      // Якщо це один тур, він може бути в data.tour
-      tour = res.data.data.tour;
-    } else if (res.data.data && res.data.data.data) {
-      // Стандартна структура
-      tour = res.data.data.data;
-    } else if (res.data.data) {
-      tour = res.data.data;
-    } else {
-      
-      throw new Error('No tour data found in response');
-    }
-
-  
+    const tour = res.data.data.data;
+    
+    if (!tour) throw new Error('No tour data found in response');
     return tour;
+
   } catch (err) {
-  
     throw err;
   }
 };

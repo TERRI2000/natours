@@ -17,7 +17,8 @@ block content
   section.section-header
     .header__hero
       .header__hero-overlay &nbsp;
-      img.header__hero-img(src=`/img/tours/${tour.imageCover}`, alt=`${tour.name}`)
+      - const imageCoverSrc = tour.imageCover && tour.imageCover.startsWith('http') ? tour.imageCover : `/img/tours/${tour.imageCover}`
+      img.header__hero-img(src=imageCoverSrc, alt=`${tour.name}`)
 
     .heading-box
       h1.heading-primary
@@ -65,7 +66,8 @@ block content
   section.section-pictures
     each img, i in tour.images
       .picture-box
-        img.picture-box__img(src=`/img/tours/${img}`, alt=`The ${tour.name} Tour ${i + 1}`, class=`picture-box__img--${i + 1}`)
+        - const imgSrc = img && img.startsWith('http') ? img : `/img/tours/${img}`
+        img.picture-box__img(src=imgSrc, alt=`The ${tour.name} Tour ${i + 1}`, class=`picture-box__img--${i + 1}`)
 
   section.section-map
     #map(data-locations=`${JSON.stringify(tour.locations)}`)
@@ -144,8 +146,10 @@ block content
     .cta
       .cta__img.cta__img--logo
         img(src='/img/logo-white.png', alt='Natours logo')
-      img.cta__img.cta__img--1(src=`/img/tours/${tour.images[1]}`, alt='Tour picture')
-      img.cta__img.cta__img--2(src=`/img/tours/${tour.images[2]}`, alt='Tour picture')
+      - const ctaImg1Src = tour.images[1] && tour.images[1].startsWith('http') ? tour.images[1] : `/img/tours/${tour.images[1]}`
+      - const ctaImg2Src = tour.images[2] && tour.images[2].startsWith('http') ? tour.images[2] : `/img/tours/${tour.images[2]}`
+      img.cta__img.cta__img--1(src=ctaImg1Src, alt='Tour picture')
+      img.cta__img.cta__img--2(src=ctaImg2Src, alt='Tour picture')
       include _dateBox
 
   //- =============================================
